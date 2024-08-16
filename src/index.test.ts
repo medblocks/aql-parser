@@ -16,10 +16,11 @@ describe("Test Select clause", () => {
         expect(aqlGrammarInstance.match('Select name as n, age as a').succeeded()).toBe(true);
     });
 
-    it("Test all cases", () => {
-        testCases.forEach((testCase) => {
+    testCases.forEach((testCase) => {
+        it(`Test case: ${testCase}`, () => {
             expect(aqlGrammarInstance.match(testCase).succeeded()).toBe(true);
         });
-    });
+    }
+    );
 
 })
