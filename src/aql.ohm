@@ -1,0 +1,27 @@
+
+Aql { Query = SelectClause WhereClause? OrderBy? LimitClause?
+
+
+// Select Clause
+SelectClause = caseInsensitive<"Select"> DistinctClause? fieldList
+DistinctClause = caseInsensitive<"distinct">
+fieldList = field (space? "," space? field)*
+field = identifier space (caseInsensitive<"as">?) space identifier?
+identifier = letter+
+
+// Limit Clause
+LimitClause = caseInsensitive<"Limit"> digit+
+
+// Where Clause
+WhereClause = caseInsensitive<"Where"> whereExpr
+whereExpr =  condition (space? whereOperations space? condition)*
+condition = aqlMatcher
+aqlMatcher = letter+ space? matchOperations space? whereIdentifier
+whereIdentifier = "\"" letter+ "\""
+whereOperations = caseInsensitive<"and"> | caseInsensitive<"or"> 
+matchOperations = "=" | caseInsensitive<"equals"> | caseInsensitive<"not equals"> | caseInsensitive<"!=">
+
+// Order Clause
+OrderBy = caseInsensitive<"order by"> identifier orderMatcher?
+orderMatcher = caseInsensitive<"ASCENDING">| caseInsensitive<"DESCENDING"> | caseInsensitive<"ASC">| caseInsensitive<"DESC">
+}
