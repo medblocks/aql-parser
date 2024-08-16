@@ -1,6 +1,5 @@
 import { expect, test, it, describe } from 'vitest'
-import { aqlGrammarInstance } from '.';
-
+import { AQLParser } from '.';
 
 const testCases = [
     "select c",
@@ -13,14 +12,14 @@ const testCases = [
 
 describe("Test Select clause", () => {
     it("Test grammar", () => {
-        expect(aqlGrammarInstance.match('Select name as n, age as a').succeeded()).toBe(true);
+        const a = AQLParser().parse('select c from EHR ex contains OBSERVATION [openehr.v1] where sx equals 10 order by ascending limit 10');
+        expect(a).toBeDefined();
     });
 
     testCases.forEach((testCase) => {
         it(`Test case: ${testCase}`, () => {
-            expect(aqlGrammarInstance.match(testCase).succeeded()).toBe(true);
+            expect(AQLParser().parse(testCase)).toBeDefined()
         });
-    }
-    );
+    });
 
 })
