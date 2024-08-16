@@ -1,20 +1,25 @@
 import { expect, test, it, describe } from 'vitest'
-import { aqlGrammar, myGrammar } from '.';
+import { aqlGrammarInstance } from '.';
 
-describe("Test Basics", () => {
-    it('should be true', () => {
-        expect(true).toBe(true);
-    });
 
-    it('Test Mygrammar', () => {
-        expect(myGrammar.match('Hola').succeeded()).toBe(true);
-        expect(myGrammar.match('Sayonara').succeeded()).toBe(false);
-    });
-});
-
+const testCases = [
+    "select c",
+    "select c as x",
+    "select c as x, d as y limit 10",
+    "select c as x where xds = 10 and y = $composition_id limit 20",
+    "select c from EHR ex where sd = $id and x = 23 limit 5",
+    "select c from EHR ex contains OBSERVATION [openehr.v1] where sx equals 10 order by ascending limit 10"
+]
 
 describe("Test Select clause", () => {
     it("Test grammar", () => {
-        expect(aqlGrammar.match('Select name as n, age as a').succeeded()).toBe(true);
+        expect(aqlGrammarInstance.match('Select name as n, age as a').succeeded()).toBe(true);
     });
+
+    it("Test all cases", () => {
+        testCases.forEach((testCase) => {
+            expect(aqlGrammarInstance.match(testCase).succeeded()).toBe(true);
+        });
+    });
+
 })
