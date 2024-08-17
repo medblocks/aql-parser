@@ -2,7 +2,7 @@ import * as ohm from 'ohm-js';
 
 const createAQLGrammar = () => {
   const aqlGrammar = String.raw`
-  Aql {
+Aql {
     Query = SelectClause FromClause? WhereClause? OrderBy? LimitClause?
    
     operands = caseInsensitive<"and"> | caseInsensitive<"or"> 
@@ -15,39 +15,45 @@ const createAQLGrammar = () => {
     from = caseInsensitive<"from">
     reserveWords = select | limit | where | orderByReserve | contains | not | from
     rmTypes = "EVALUATION" | "OBSERVATION" | "EHR" | "COMPOSITION"
-    identifier = ~(reserveWords) (letter | "_" | "-" | "/" | "." ) (letter | digit | "_" | "-" | " /" | "." )*
+    identifier = ~(reserveWords) (letter | "_" | "-" | "/" | "." | "[" | "]" | "="|"$" ) (letter | digit | "_" | "-" | "/" | "." | "[" | "]" | "="|"$")*
     number = ~(reserveWords) digit+
     variable = ~(reserveWords) letter+digit+
-   
+  
     // Select Clause
-    SelectClause = select DistinctClause? fieldList
+    SelectClause = select DistinctClause? FieldList
     DistinctClause = caseInsensitive<"distinct">
-    fieldList = field (space? "," space? field)*
-    field = identifier space? (caseInsensitive<"as">? space? identifier?)
+    FieldList = SelectField ("," SelectField)*
+    SelectField = Field | aggField
+    Field = identifier ("/" identifier)* (caseInsensitive<"as"> identifier)?
+    aggregateTypes = caseInsensitive<"count"> | caseInsensitive<"max"> | caseInsensitive<"min"> | caseInsensitive<"avg">
+    aggField = aggregateTypes "(" identifier ("/" identifier)* ")" (caseInsensitive<"as"> identifier)?
+
   
     // Limit Clause
     LimitClause = limit number
   
     // Where Clause
-    WhereClause = where whereExpr
-    whereExpr = aqlMatcher (space? operands space? aqlMatcher)*
-    aqlMatcher = identifier space? matchOperations space? (whereIdentifier | aqlVariable | number )
-    whereIdentifier = "\"" identifier "\""  
-    aqlVariable = "$"identifier
+    WhereClause = where WhereExpr
+    WhereExpr = AqlMatcher (operands AqlMatcher)*
+    AqlMatcher = identifier ("/" identifier)* matchOperations (whereIdentifier | aqlVariable | number )
+    whereIdentifier = "\"" identifier "\""
+    aqlVariable = "$" identifier
     matchOperations = "=" | caseInsensitive<"equals"> | caseInsensitive<"not equals">
-                                                | "!=" | caseInsensitive<"like"> | caseInsensitive<"not like"> 
+                                                | "!=" | caseInsensitive<"like"> | caseInsensitive<"not like"> | "<=" | ">=" | "<" | ">"
   
-  // FromClause
-    FromClause = caseInsensitive<"from"> "EHR" identifier ContainsClause?
+    // FromClause
+    FromClause = from "EHR" identifier (ContainsClause+)?
   
-  // Contains
-  ContainsClause = contains RmExpression (operands RmExpression)*
-  RmExpression = rmTypes (identifier)? "["identifier"]"
+    // Contains
+    ContainsClause = contains RmExpression (operands RmExpression)*
+    RmExpression = rmTypes (identifier | AqlExpression )+
+    AqlExpression = "[" identifier "]"
   
     // Order Clause
     OrderBy = orderByReserve identifier orderMatcher?
     orderMatcher = caseInsensitive<"ascending"> | caseInsensitive<"descending"> | caseInsensitive<"asc"> | caseInsensitive<"desc">
-  }`;
+}
+`;
 
   return ohm.grammar(aqlGrammar);
 };
