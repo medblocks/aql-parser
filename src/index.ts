@@ -3,7 +3,7 @@ import * as ohm from 'ohm-js';
 const createAQLGrammar = () => {
   const aqlGrammar = String.raw`
 Aql {
-    Query = SelectClause FromClause? WhereClause? OrderBy? LimitClause?
+    Query = SelectClause FromClause? WhereClause? OrderBy? LimitClause? ";"?
    
     operands = caseInsensitive<"and"> | caseInsensitive<"or"> 
     select = caseInsensitive<"select">
