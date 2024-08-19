@@ -13,6 +13,7 @@ Aql {
     contains = caseInsensitive<"contains">
     not  = caseInsensitive<"not">
     from = caseInsensitive<"from">
+    aggregateTypes = caseInsensitive<"count"> | caseInsensitive<"max"> | caseInsensitive<"min"> | caseInsensitive<"avg">
     reserveWords = select | limit | where | orderByReserve | contains | not | from
     rmTypes = "EVALUATION" | "OBSERVATION" | "EHR" | "COMPOSITION"
     identifier = ~(reserveWords) (letter | "_" | "-" | "/" | "." | "[" | "]" | "="|"$" ) (letter | digit | "_" | "-" | "/" | "." | "[" | "]" | "="|"$")*
@@ -23,10 +24,9 @@ Aql {
     SelectClause = select DistinctClause? FieldList
     DistinctClause = caseInsensitive<"distinct">
     FieldList = SelectField ("," SelectField)*
-    SelectField = Field | aggField
+    SelectField = AggField | Field
     Field = identifier ("/" identifier)* (caseInsensitive<"as"> identifier)?
-    aggregateTypes = caseInsensitive<"count"> | caseInsensitive<"max"> | caseInsensitive<"min"> | caseInsensitive<"avg">
-    aggField = aggregateTypes "(" identifier ("/" identifier)* ")" (caseInsensitive<"as"> identifier)?
+    AggField = aggregateTypes  "(" identifier* ")" (caseInsensitive<"as"> identifier)?
 
   
     // Limit Clause
