@@ -1,7 +1,7 @@
 import { SelectedQuery } from "./state";
 import { useAtom } from "jotai";
 
-import { AQLParser, IAST } from "../../src/index";
+import { AQLParser, type IAST } from "../../src/index";
 import { useEffect, useState } from "react";
 
 interface ASTBlockProps {
@@ -22,8 +22,8 @@ const ASTBlock: React.FC<ASTBlockProps> = ({ ast }) => {
                         return null;
                     }
 
-                    if(key === "type") {
-                        return null
+                    if (key === "type") {
+                        return null;
                     }
 
                     if (typeof value === "string" || typeof value === "number") {
@@ -34,7 +34,13 @@ const ASTBlock: React.FC<ASTBlockProps> = ({ ast }) => {
                         );
                     }
 
-                    if (typeof value === "object" && value.type) {
+                    if (Array.isArray(value)) {
+                        return value.map((subAst, index) => (
+                            <ASTBlock key={`${key}-${index}`} ast={subAst as IAST} />
+                        ));
+                    }
+
+                    if (typeof value === "object") {
                         return (
                             <ASTBlock key={key} ast={value as IAST} />
                         );
@@ -46,6 +52,7 @@ const ASTBlock: React.FC<ASTBlockProps> = ({ ast }) => {
         </div>
     );
 };
+
 const ParserPanel = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [selectedQuery, _setSelectedQuery] = useAtom(SelectedQuery);
