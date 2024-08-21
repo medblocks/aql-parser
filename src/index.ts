@@ -1,4 +1,5 @@
 import * as ohm from 'ohm-js';
+import {toAST} from 'ohm-js/extras';
 
 const createAQLGrammar = () => {
   const aqlGrammar = String.raw`
@@ -27,7 +28,6 @@ Aql {
     SelectField = AggField | Field
     Field = identifier ("/" identifier)* (caseInsensitive<"as"> identifier)?
     AggField = aggregateTypes  "(" identifier* ")" (caseInsensitive<"as"> identifier)?
-
   
     // Limit Clause
     LimitClause = limit number
@@ -58,12 +58,20 @@ Aql {
   return ohm.grammar(aqlGrammar);
 };
 
+export type IAST = {
+  [key: number]: Array<IAST> | string | null | number;
+  type: string;
+};
+
 const parseAQL = (aqlGrammarInstance: ohm.Grammar, aql: string) => {
   const match = aqlGrammarInstance.match(aql);
-  if (match) {
-    return match;
+  if (match.succeeded()) {
+    const ast = toAST(match);
+    return {
+      ...match,
+      ast: ast as IAST,
+    };
   } else {
-    // @ts-ignore
     throw new Error(match.message);
   }
 };
@@ -72,6 +80,6 @@ export const AQLParser = () => {
   const aqlGrammarInstance = createAQLGrammar();
 
   return {
-    parse: (aql: string) => parseAQL(aqlGrammarInstance, aql)
+    parse: (aql: string) => parseAQL(aqlGrammarInstance, aql),
   };
 };
