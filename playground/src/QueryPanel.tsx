@@ -54,13 +54,6 @@ const QueryPanel = () => {
         setSelectedQuery([queries[index], index]);
     };
 
-    const handleBlur = (index: number, e: React.FocusEvent<HTMLDivElement>) => {
-        const updatedQuery = e.target.innerText;
-        const updatedQueries = [...queries];
-        updatedQueries[index] = updatedQuery;
-        editQueries(updatedQueries);
-        setSelectedQuery([updatedQuery, index]);
-    };
 
     useEffect(() => {
         setSelectedQuery([queries[0], 0]);
@@ -73,7 +66,7 @@ const QueryPanel = () => {
                     <div
                         contentEditable
                         suppressContentEditableWarning
-                        onBlur={(e) => handleBlur(index, e)}
+ 
                         onClick={() => handleSelect(index)}
                         key={index}
                         className={`hover:bg-slate-200 px-4 py-2 cursor-pointer ${selectedQuery[1] === index ? "border-l-4 border-solid border-indigo-500 bg-sky-200" : "bg-slate-100"}`}

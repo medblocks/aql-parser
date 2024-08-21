@@ -96,7 +96,10 @@ const ParserPanel = () => {
                 </div>
             }
 
-            {queryAST && success && <ASTBlock ast={queryAST} />}
+            <div className="h-full" >
+                {queryAST && success && <ASTBlock ast={queryAST} />}
+            </div>
+
         </div>
     );
 };

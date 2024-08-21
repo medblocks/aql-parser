@@ -11,7 +11,7 @@ function App() {
         <p className='text-white font-semibold block' >Medblocks AQL Parser</p>
         <a className='block text-blue-300' href="https://github.com/medblocks/aql-parser" >Github</a>
       </div>
-      <div className="grid grid-flow-row grid-cols-4" >
+      <div className="grid grid-flow-row grid-cols-4 h-[100vh]" >
         <div className="col-span-1" >
           <QueryPanel />
         </div>
