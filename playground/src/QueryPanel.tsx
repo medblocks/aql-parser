@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { SelectedQuery } from "./state";
 import { useAtom } from "jotai";
 
-const initalQueries = [
+const initialQueries = [
     "select c as x where xds = 10 and y = $composition_id limit 20",
     "select c from EHR ex where sd = $id and x = 23 limit 5",
     `
@@ -32,7 +32,7 @@ LIMIT 5`,
 ];
 
 const QueryPanel = () => {
-    const [queries, editQueries] = useState(initalQueries);
+    const [queries, editQueries] = useState(initialQueries);
     const [newQuery, setNewQuery] = useState("");
     const [selectedQuery, setSelectedQuery] = useAtom(SelectedQuery);
 
@@ -64,7 +64,7 @@ const QueryPanel = () => {
 
     useEffect(() => {
         setSelectedQuery([queries[0], 0]);
-    }, []);
+    }, [queries, setSelectedQuery]);
 
     return (
         <div className="font-mono text-sm px-2 mt-2">
@@ -72,6 +72,7 @@ const QueryPanel = () => {
                 {queries.map((query, index) => (
                     <div
                         contentEditable
+                        suppressContentEditableWarning
                         onBlur={(e) => handleBlur(index, e)}
                         onClick={() => handleSelect(index)}
                         key={index}
